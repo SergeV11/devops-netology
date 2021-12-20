@@ -26,15 +26,19 @@ commit 225466bc3e5f35baa5d07197bbc079345b77525e
 7. Author: Martin Atkins <mart@degeneration.co.uk> 
 
 
+(Пояснение:
+1. git show aefea |grep aefea -A4
+2. git show 85024d3 |grep Date: -A2|tail -1
+3. git show b8d720 видим что это мердж, в котором указано начало хешей обоих родителей, git show 56cd7859e 9ea88f22f
+4. git log v0.12.23..v0.12.24 --oneline
+5. git log -S "func providerSource"  |head -1, первый коммит покажет когда она создана
+6. ищем функцию в логе git log -S "func globalPluginDir", смотрим найденный коммит git show 8364383c359a6b738a436d1b7745ccdce178df47, видим что функция определена в plugins.go, далее git log -L :globalPluginDir:plugins.go
+7 .git log -S "func synchronizedWriters(" |grep commit -A2 выведет два коммита и даты, первое упоминание функции в 2017 году Martin Atkins <mart@degeneration.co.uk> , также это видно если сделать git show обоих коммитов
+)
+
+
 
 ===========================================================================================================
-
-
-
-
-
-
-
 
 
 
