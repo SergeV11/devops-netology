@@ -23,6 +23,7 @@ commit 225466bc3e5f35baa5d07197bbc079345b77525e
     Cleanup after v0.12.23 release
 5. main: Consult local directories as potential mirrors of providers,8c928e835
 6.78b12205587fe839f10d946ea3fdc06719decb05,52dbf94834cb970b510f2fba853a5b49ad9b1a46,41ab0aef7a0fe030e84018973a64135b11abcd70,66ebff90cdfaa6938f26f908c7ebad8d547fea17,8364383c359a6b738a436d1b7745ccdce178df47
+
 7. Author: Martin Atkins <mart@degeneration.co.uk> 
 
 
