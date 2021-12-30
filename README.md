@@ -1,3 +1,52 @@
+
+1. +
+2. +
+3. +
+4. +
+5. hdd 64 gb, 1024 ram, 2 core proc,1 share directory
+6. Добавить в конфиг файл:
+
+config.vm.provider "virtualbox" do |v|
+  v.memory = 2048
+  v.cpus = 4
+end
+7.+
+8. HISTFILESIZE, строка 974 (man bash|grep -A5 -B5 -n HISTFILESIZE)
+ignoreboth - игнорирование сохранения команды в историю если она уже есть в истории или начинается с пробела
+9. строка 294 (man bash |grep -n { |head -10 )
+фигурные скобки применяют в функциях, в условиях, в циклах, везде где необходим список элементов.
+10. touch {000001..100000}, не получится, максимальное число элементов 139672
+11. проверяет существование директории
+12.
+В задании указано  bash is /usr/local/bin/bash, но в 20 версии убунту его нет:
+cat /usr/local/bin/bash
+cat: /usr/local/bin/bash: No such file or directory
+поэтому в выводе будет дефолт /usr/bin/bash
+
+команды:
+mkdir /tmp/new_path_directory
+cp  /bin/bash /tmp/new_path_directory
+PATH=/tmp/new_path_directory/:$PATH
+root@vagrant:/home/vagrant# type -a bash
+bash is /tmp/new_path_directory/bash
+bash is /usr/bin/bash
+bash is /bin/bash
+
+13. at используется для запуска команды в определнное время
+batch - используется когда load average загрузки системы будет ниже 1.5
+14. vagrant suspend
+
+
+
+=================================================================================================================================================
+
+
+
+
+
+
+
+
 1. aefead2207ef7e2aa5dc81a34aedf0cad4c32545  Update CHANGELOG.md
 2. (tag: refs/tags/v0.12.23) v0.12.23
 3.56cd7859e05c36c06b56d013b55a252d0bb7e158, 9ea88f22fc6269854151c571162c5bcf958bee2b
