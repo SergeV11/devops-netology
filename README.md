@@ -1,3 +1,136 @@
+1.
+useradd node_exporter -s /sbin/nologin
+ wget https://github.com/prometheus/node_exporter/releases/download/v1.1.2/node_exporter-1.1.2.linux-amd64.tar.gz
+ tar xvfz node_exporter-*.*-amd64.tar.gz
+ cp node_exporter-*.*-amd64/node_exporter /usr/sbin/
+ echo "
+[Unit]
+Description=Node Exporter
+
+[Service]
+User=node_exporter
+EnvironmentFile=/etc/sysconfig/node_exporter
+ExecStart=/usr/sbin/node_exporter $OPTIONS
+
+[Install]
+WantedBy=multi-user.target
+" > /etc/systemd/system/node_exporter.service
+
+ mkdir -p /etc/sysconfig
+ touch /etc/sysconfig/node_exporter
+
+ systemctl daemon-reload
+ systemctl enable node_exporter
+ systemctl start node_exporter
+ systemctl restart node_exporter
+
+
+2.
+curl http://localhost:9100/metrics|grep node_cpu_seconds
+node_cpu_seconds_total{cpu="0",mode="idle"} 2046.66
+node_cpu_seconds_total{cpu="0",mode="iowait"} 9.93
+node_cpu_seconds_total{cpu="0",mode="system"} 10.57
+node_cpu_seconds_total{cpu="0",mode="user"} 2.64
+
+root@vagrant:/home/vagrant# curl http://localhost:9100/metrics|grep node_memory_Mem|grep -v "#"
+node_memory_MemAvailable_bytes 7.28158208e+08
+node_memory_MemFree_bytes 6.75213312e+08
+node_memory_MemTotal_bytes 1.028685824e+09
+
+root@vagrant:/home/vagrant# curl http://localhost:9100/metrics|grep node_disk|grep sda |grep -v " 0"
+node_disk_io_time_seconds_total{device="sda"} 18.748
+node_disk_io_time_weighted_seconds_total{device="sda"} 42.92
+node_disk_read_bytes_total{device="sda"} 3.5017728e+08
+node_disk_read_time_seconds_total{device="sda"} 32.102000000000004
+node_disk_reads_completed_total{device="sda"} 21152
+node_disk_reads_merged_total{device="sda"} 3968
+node_disk_write_time_seconds_total{device="sda"} 34.412
+node_disk_writes_completed_total{device="sda"} 40779
+node_disk_writes_merged_total{device="sda"} 1203
+node_disk_written_bytes_total{device="sda"} 2.38563328e+08
+
+root@vagrant:/home/vagrant# curl http://localhost:9100/metrics|grep eth0|grep -v " 0"
+node_arp_entries{device="eth0"} 2
+node_network_receive_bytes_total{device="eth0"} 1.0106128e+07
+node_network_receive_drop_total{device="eth0"} 63
+node_network_receive_multicast_total{device="eth0"} 63
+node_network_receive_packets_total{device="eth0"} 13419
+node_network_speed_bytes{device="eth0"} 1.25e+08
+node_network_transmit_bytes_total{device="eth0"} 1.947757e+06
+node_network_transmit_packets_total{device="eth0"} 8959
+node_network_transmit_queue_length{device="eth0"} 1000
+node_network_up{device="eth0"} 1
+
+
+3.
+root@vagrant:/home/vagrant# ps aux |grep netdata
+netdata     2116  1.3  3.6 301884 36852 ?        Sl   20:31   0:03 /usr/sbin/netdata
+netdata     2118  0.0  0.8  33924  9028 ?        Sl   20:31   0:00 /usr/sbin/netdata --special-spawn-server
+netdata     2283  0.1  0.2   4032  2952 ?        S    20:31   0:00 bash /usr/libexec/netdata/plugins.d/tc-qos-helper.sh 1
+netdata     2284  0.2  2.5 731560 25400 ?        Sl   20:31   0:00 /usr/libexec/netdata/plugins.d/go.d.plugin 1
+netdata     2289  1.7  0.5  59208  5336 ?        S    20:31   0:04 /usr/libexec/netdata/plugins.d/apps.plugin 1
+root        2290  0.0  0.2  10548  2024 ?        S    20:31   0:00 /usr/libexec/netdata/plugins.d/nfacct.plugin 1
+netdata     2557  1.5  4.2 307504 42412 ?        Sl   20:32   0:03 /usr/sbin/netdata
+netdata     2559  0.0  0.9  33924  9284 ?        Sl   20:32   0:00 /usr/sbin/netdata --special-spawn-server
+netdata     2715  0.1  0.2   4032  2780 ?        S    20:32   0:00 bash /usr/libexec/netdata/plugins.d/tc-qos-helper.sh 1
+root        2732  0.0  0.2  10548  2088 ?        S    20:32   0:00 /usr/libexec/netdata/plugins.d/nfacct.plugin 1
+netdata     2737  1.7  0.5  59196  5528 ?        S    20:32   0:03 /usr/libexec/netdata/plugins.d/apps.plugin 1
+netdata     2740  0.2  2.4 731304 24680 ?        Sl   20:32   0:00 /usr/libexec/netdata/plugins.d/go.d.plugin 1
+root        2750  0.8  0.7 1233960 7508 ?        Sl   20:32   0:01 /usr/libexec/netdata/plugins.d/ebpf.plugin 1
+root        3090  0.0  0.0   6432   736 pts/0    S+   20:36   0:00 grep --color=auto netdata
+root@vagrant:/home/vagrant# netstat -an |grep 19999
+tcp        0      0 0.0.0.0:19999           0.0.0.0:*               LISTEN
+tcp        0      0 0.0.0.0:19999           0.0.0.0:*               LISTEN
+tcp        0      0 10.0.2.15:19999         10.0.2.2:65073          ESTABLISHED
+tcp        0      0 10.0.2.15:19999         10.0.2.2:65061          ESTABLISHED
+tcp        0      0 10.0.2.15:19999         10.0.2.2:65058          ESTABLISHED
+
+с метриками и комментариями ознакомился
+
+4. В целом да
+ dmesg |grep virt
+[    0.002278] CPU MTRRs all blank - virtualized system.
+[    0.070393] Booting paravirtualized kernel on KVM
+[    3.211414] systemd[1]: Detected virtualization oracle.
+
+5.
+Судя по документации fs.nr_open обозначает максимальное количество файловых дескрипторов, которые может выделить процесс. Значение по умолчанию — 1024*1024 (1048576)
+sysctl -n fs.nr_open
+1048576
+
+мягкий и жёсткий лимиты для пользователя (soft hard) не позволяют достичь максимального лимита для системы
+
+
+
+6.
+root@vagrant:/home/vagrant# unshare --pid --fork --mount-proc bash --norc -c 'sleep 3600' &
+[1] 1511
+root@vagrant:/home/vagrant# ps aux |grep sleep
+root        1511  0.0  0.0   5480   528 pts/0    S    22:41   0:00 unshare --pid --fork --mount-proc bash --norc -c sleep 3600
+root        1512  0.0  0.0   5476   588 pts/0    S    22:41   0:00 sleep 3600
+root        1542  0.0  0.0   6432   724 pts/0    S+   22:42   0:00 grep --color=auto sleep
+root@vagrant:/home/vagrant# nsenter --pid --target 1512 --mount
+root@vagrant:/# ps a
+    PID TTY      STAT   TIME COMMAND
+      1 pts/0    S      0:00 sleep 3600
+      2 tty1     S+     0:00 -bash
+     14 pts/0    S      0:00 -bash
+     25 pts/0    R+     0:00 ps a
+root@vagrant:/#
+
+
+
+
+7. это форк-бомба, функция создаёт два своих экземпляра бесконечно, пока не упрётся в лимит процессов системы.
+отвечает за это судя по всему cgroup: fork rejected by pids controller in /user.slice/user-1000.slice/session-3.scope
+изменить лимит можно ulimit -u 100 или /etc/security/limits.conf
+
+
+
+=============================================================================================================================================================
+=============================================================================================================================================================
+==============================================================================================================================================================
+
 1. chdir("/tmp")     = 0
 2. openat(AT_FDCWD, "/usr/share/misc/magic.mgc", O_RDONLY) = 3
 3. этот файл должен храниться в procfs, соответсвенно нужно его найти через файловый дескиптор и сделать echo "" > /proc/pid/fd/num_fd
