@@ -1,3 +1,94 @@
+1. Изучено. эффективное использование в частности для p2p сетей
+2. не могут, так как метаданные записаны в одном и том же иноде, и при изменении прав на файле,они изменятся на остальных хард линках
+3. 
+root@vagrant:/home/vagrant# fdisk -l |grep "Disk /dev/sd"
+Disk /dev/sda: 64 GiB, 68719476736 bytes, 134217728 sectors
+Disk /dev/sdb: 2.51 GiB, 2684354560 bytes, 5242880 sectors
+Disk /dev/sdc: 2.51 GiB, 2684354560 bytes, 5242880 sectors
+4.
+root@vagrant:/home/vagrant# fdisk -l |grep /dev/sdb
+Disk /dev/sdb: 2.51 GiB, 2684354560 bytes, 5242880 sectors
+/dev/sdb1          2048 4196351 4194304    2G 83 Linux
+/dev/sdb2       4196352 5242879 1046528  511M 83 Linux
+5.
+sfdisk -d /dev/sdb|sfdisk --force /dev/sdc
+
+root@vagrant:/home/vagrant# fdisk -l |grep /dev/sdc
+Disk /dev/sdc: 2.51 GiB, 2684354560 bytes, 5242880 sectors
+/dev/sdc1          2048 4196351 4194304    2G 83 Linux
+/dev/sdc2       4196352 5242879 1046528  511M 83 Linux
+
+6. mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/sdb1 /dev/sdc1
+7. mdadm --create --verbose /dev/md1 --level=0 --raid-devices=2 /dev/sdb2 /dev/sdc2
+8. pvcreate /dev/md0 /dev/md1
+9. vgcreate vg1 /dev/md0 /dev/md1
+10. lvcreate -L 100M vg1 /dev/md1
+11. mkfs.ext4 /dev/vg1/lvol0
+12. mkdir /tmp/new && mount /dev/vg1/lvol0 /tmp/new
+13. wget https://mirror.yandex.ru/ubuntu/ls-lR.gz -O /tmp/new/test.gz
+14.
+lsblk
+NAME                      MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT
+loop0                       7:0    0 55.5M  1 loop  /snap/core18/2253
+loop1                       7:1    0 61.9M  1 loop  /snap/core20/1328
+loop2                       7:2    0 43.3M  1 loop  /snap/snapd/14295
+loop3                       7:3    0 61.9M  1 loop  /snap/core20/1270
+loop4                       7:4    0 55.5M  1 loop  /snap/core18/2284
+loop5                       7:5    0 67.2M  1 loop  /snap/lxd/21835
+loop6                       7:6    0 43.4M  1 loop  /snap/snapd/14549
+loop7                       7:7    0 70.3M  1 loop  /snap/lxd/21029
+sda                         8:0    0   64G  0 disk
++-sda1                      8:1    0    1M  0 part
++-sda2                      8:2    0    1G  0 part  /boot
+L-sda3                      8:3    0   63G  0 part
+  L-ubuntu--vg-ubuntu--lv 253:0    0 31.5G  0 lvm   /
+sdb                         8:16   0  2.5G  0 disk
++-sdb1                      8:17   0    2G  0 part
+¦ L-md0                     9:0    0    2G  0 raid1
+L-sdb2                      8:18   0  511M  0 part
+  L-md1                     9:1    0 1018M  0 raid0
+    L-vg1-lvol0           253:1    0  100M  0 lvm   /tmp/new
+sdc                         8:32   0  2.5G  0 disk
++-sdc1                      8:33   0    2G  0 part
+¦ L-md0                     9:0    0    2G  0 raid1
+L-sdc2                      8:34   0  511M  0 part
+  L-md1                     9:1    0 1018M  0 raid0
+    L-vg1-lvol0           253:1    0  100M  0 lvm   /tmp/new
+sr0                        11:0    1 1024M  0 rom
+
+15.
+root@vagrant:/tmp/new# gzip -t /tmp/new/test.gz
+root@vagrant:/tmp/new# echo $?
+0
+16. pvmove /dev/md1
+17. mdadm /dev/md0 --fail /dev/sdb1
+18.
+dmesg |grep md0
+[  925.760457] md/raid1:md0: not clean -- starting background reconstruction
+[  925.760458] md/raid1:md0: active with 2 out of 2 mirrors
+[  925.760469] md0: detected capacity change from 0 to 2144337920
+[  925.761266] md: resync of RAID array md0
+[  936.067807] md: md0: resync done.
+[ 3881.179646] md/raid1:md0: Disk failure on sdb1, disabling device.
+               md/raid1:md0: Operation continuing on 1 devices.
+19.
+root@vagrant:/tmp/new#  gzip -t /tmp/new/test.gz
+root@vagrant:/tmp/new# echo $?
+0
+
+20.vagrant destroy
+
+
+
+
+======================================================================================================================================================================
+=====================================================================================================================================================================
+=====================================================================================================================================================================
+
+
+
+
+
 1.
 useradd node_exporter -s /sbin/nologin
  wget https://github.com/prometheus/node_exporter/releases/download/v1.1.2/node_exporter-1.1.2.linux-amd64.tar.gz
