@@ -20,16 +20,16 @@ services:
 ## 2.
 
 <p align="center">
-  <img width="1200" height="600" src="./assets/6.2.1.png">
+  <img width="1200" height="300" src="./assets/6.2.1.png">
 </p>
 <p align="center">
-  <img width="1200" height="600" src="./assets/6.2.2.png">
+  <img width="1200" height="800" src="./assets/6.2.2.png">
 </p>
 <p align="center">
-  <img width="1200" height="600" src="./assets/6.2.3.png">
+  <img width="1200" height="200" src="./assets/6.2.3.png">
 </p>
 <p align="center">
-  <img width="1200" height="600" src="./assets/6.2.4.png">
+  <img width="1200" height="300" src="./assets/6.2.4.png">
 </p>
 
 ## 3.
