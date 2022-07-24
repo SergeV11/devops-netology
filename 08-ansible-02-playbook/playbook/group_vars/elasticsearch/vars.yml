@@ -1,0 +1,3 @@
+---
+elastic_version: "11.0.11"
+elastic_home: "/opt/elastic/"

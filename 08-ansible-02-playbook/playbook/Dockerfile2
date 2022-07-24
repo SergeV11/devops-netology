@@ -1,0 +1,4 @@
+FROM centos/python-38-centos7
+ENTRYPOINT ["tail"]
+CMD ["-f","/dev/null"]
+

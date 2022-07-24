@@ -1,0 +1,9 @@
+---
+  el:
+    hosts:
+      elasticsearch:
+        ansible_connection: docker
+#  deb:
+#    hosts:
+#      ubuntu:
+#        ansible_connection: docker

@@ -1,0 +1,8 @@
+---
+java_jdk_version: "11.0.11"
+java_oracle_jdk_package: jdk-{{java_jdk_version}}.tar.gz
+elastic_home: "/opt/elastic/"
+kibana_home: "/opt/kibana/"
+elastic_version: "7.2.0"
+kibana_version: "8.2.0"
+
